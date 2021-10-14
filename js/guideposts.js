@@ -188,6 +188,7 @@ osmcz.guideposts = function(map, base_layers, overlays, control, group) {
   });
 
   map.on('popupopen', function(e) {
+    popupMarker = e.popup._source;
   });
 
   map.on('popupclose', function(e) {
