@@ -386,9 +386,11 @@ osmcz.guideposts = function(map, base_layers, overlays, control, group) {
 
   function show_sidebar()
   {
-    sidebar.setContent(sidebar_init());
-    sidebar.on('hidden', guideposts.cancel_moving);
-    sidebar.show();
+
+
+//    sidebar.setContent(sidebar_init());
+//    sidebar.on('hidden', guideposts.cancel_moving);
+//    sidebar.show();
 
     var inner = [];
     var content = document.getElementById("sidebar-content");
@@ -410,6 +412,8 @@ osmcz.guideposts = function(map, base_layers, overlays, control, group) {
     inner.push("<hr><img class='thumbnail center-block' src='" + popupThumbnail + "'/>");
 
     content.innerHTML = inner.join('');
+
+    sidebar.open('guidepost');
   }
 
   osmcz.guideposts.prototype.move_point = function(gid, glat, glon)
