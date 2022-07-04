@@ -1,6 +1,5 @@
 html, body {
   margin: 0;
-  /** Possibly padding too **/
   padding: 0;
 }
 
@@ -15,3 +14,27 @@ html, body {
   font-size: 14px;
   margin: 4px 2px;
 }
+
+.container {
+  position: relative;
+ height: 100%;
+ width: 100%;
+}
+
+.bottomleft {
+  position: absolute;
+  bottom: 8px;
+  left: 60px;
+  z-index:9999;
+}
+
+html, body, #map {
+ height: 100%;
+ width: 100%;
+}
+
+#map {
+ height: 100%;
+ width: 100%;
+}
+
