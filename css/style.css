@@ -1,3 +1,9 @@
+html, body {
+  margin: 0;
+  /** Possibly padding too **/
+  padding: 0;
+}
+
 .wbutton {
   background-color: #5555ff;
   border: 2;
