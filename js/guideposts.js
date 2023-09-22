@@ -1,7 +1,7 @@
 /*
  guideposts for openstreetmap.social
  Javascript code for openstreetmap.social website
- Copyright (C) 2015-2021 Michal Grézl, Piskwor, Marián Kyral, zbycz, nhamrle
+ Copyright (C) 2015-2023 Michal Grézl, Piskwor, Marián Kyral, zbycz, nhamrle
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
