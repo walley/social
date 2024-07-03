@@ -64,19 +64,19 @@ osmcz.guideposts = function(map, base_layers, overlays, control, group) {
   });
 
   var cycle_icon = L.icon({
-    iconUrl: osmcz.basePath + "img/gp/cycle.png",
+    iconUrl: cdn + "img/bicycle.png",
     iconSize: [48, 48],
     iconAnchor: [23, 45]
   });
 
   var cycle_foot_icon = L.icon({
-    iconUrl: osmcz.basePath + "img/gp/cycle_foot.png",
+    iconUrl: cdn + "img/bicycle.png",
     iconSize: [48, 48],
     iconAnchor: [23, 45]
   });
 
   var infopane_icon = L.icon({
-    iconUrl: osmcz.basePath + "img/gp/infopane.png",
+    iconUrl: cdn + "img/board.png",
     iconSize: [48, 48],
     iconAnchor: [23, 45]
   });
