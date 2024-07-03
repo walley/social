@@ -1,7 +1,7 @@
 /*
  guideposts for openstreetmap.social
  Javascript code for openstreetmap.social website
- Copyright (C) 2015-2023 Michal Grézl, Piskwor, Marián Kyral, zbycz, nhamrle
+ Copyright (C) 2015-2024 Michal Grézl, Piskwor, Marián Kyral, zbycz, nhamrle
 
  This program is free software: you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -136,7 +136,7 @@ osmcz.guideposts = function(map, base_layers, overlays, control, group) {
         html_content += "<br>";
       }
       html_content += "<a href='https://api.openstreetmap.social/" + b.url + "'>";
-      html_content += "<img src='http://api.openstreetmap.social/p/phpThumb.php?h=150&src=http://api.openstreetmap.social/"+b.url+"'>";
+      html_content += "<img src='https://api.openstreetmap.social/p/phpThumb.php?h=150&src=https://api.openstreetmap.social/"+b.url+"'>";
       html_content += "</a>";
 
       html_content += "<div id='hashtags'>" + parse_hashtags(b.tags) + "</div>";
