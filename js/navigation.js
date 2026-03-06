@@ -1,10 +1,9 @@
-// navigation.js - Full navigation (routing) for openstreetmap.social
-// Uses free OSRM demo server (no API key needed)
+// navigation.js - Full navigation for openstreetmap.social (fixed 2026 version)
 
 var navigationMarkers = L.layerGroup().addTo(map);
 var routingControl = null;
 
-// Navigation UI HTML (clean, modern look)
+// Navigation UI HTML
 var navigationHTML = `
     <style>
         .nav-container { padding: 15px; background: #f8f8f8; }
@@ -17,8 +16,8 @@ var navigationHTML = `
     </style>
 
     <div class="nav-container">
-        <input id="nav-start" class="nav-input" type="text" placeholder="Starting point (or click on map)">
-        <input id="nav-end"   class="nav-input" type="text" placeholder="Destination">
+        <input id="nav-start" class="nav-input" type="text" placeholder="Starting point (click map)">
+        <input id="nav-end"   class="nav-input" type="text" placeholder="Destination (click map)">
 
         <div class="nav-buttons">
             <button id="nav-go-btn" class="nav-btn nav-btn-go">Get Route</button>
@@ -29,18 +28,18 @@ var navigationHTML = `
     </div>
 `;
 
-// Add new "Navigation" pane to the existing sidebar
+// Add new Navigation pane to sidebar
 var navPanel = {
     id: 'navigation',
-    tab: '<i class="fa fa-directions"></i>',   // navigation icon
+    tab: '<i class="fa fa-directions"></i>',
     title: 'Navigation',
     pane: navigationHTML,
     position: 'top'
 };
 
-sidebar.addPanel(navPanel);   // 'sidebar' must be your existing sidebar variable
+sidebar.addPanel(navPanel);   // ← change to your sidebar variable name if different
 
-// === ROUTING LOGIC (free OSRM) ===
+// Create routing control (free OSRM)
 function createRoutingControl() {
     if (routingControl) routingControl.remove();
 
@@ -52,68 +51,48 @@ function createRoutingControl() {
         routeWhileDragging: true,
         showAlternatives: true,
         fitSelectedRoutes: true,
-        lineOptions: { styles: [{ color: '#3388ff', weight: 6 }] },
-        createMarker: function() { return null; }   // we use our own markers
+        lineOptions: { styles: [{ color: '#3388ff', weight: 6, opacity: 0.9 }] },
+        createMarker: function() { return null; }
     }).addTo(map);
-}
-
-// Handle "Get Route" button
-function calculateRoute() {
-    var startInput = document.getElementById('nav-start').value.trim();
-    var endInput   = document.getElementById('nav-end').value.trim();
-
-    document.getElementById('nav-status').innerHTML = 'Calculating route...';
-
-    // For simplicity we use direct lat/lng or let user click map later
-    // But to make it useful immediately, we'll add click-to-set later
-
-    if (!startInput || !endInput) {
-        document.getElementById('nav-status').innerHTML = '<span style="color:red">Please fill both fields or click map</span>';
-        return;
-    }
-
-    // You can extend this with Nominatim search if you want text → coords
-    // For now we assume user will use the click-on-map feature below
 }
 
 // Clear everything
 function clearNavigation() {
-    if (routingControl) routingControl.remove();
-    routingControl = null;
+    if (routingControl) {
+        routingControl.remove();
+        routingControl = null;
+    }
     navigationMarkers.clearLayers();
     document.getElementById('nav-start').value = '';
     document.getElementById('nav-end').value = '';
     document.getElementById('nav-status').innerHTML = '';
 }
 
-// Click on map to set start / end
+// Click on map to set start / end points
 map.on('click', function(e) {
     if (!routingControl) createRoutingControl();
 
     var latlng = e.latlng;
-    var currentWaypoints = routingControl.getWaypoints();
+    var waypoints = routingControl.getWaypoints();
 
-    if (currentWaypoints.length < 2 || currentWaypoints[0].latLng === null) {
+    if (waypoints.length === 0 || !waypoints[0].latLng) {
         routingControl.spliceWaypoints(0, 1, latlng);
         document.getElementById('nav-start').value = latlng.lat.toFixed(5) + ', ' + latlng.lng.toFixed(5);
     } else {
         routingControl.spliceWaypoints(1, 1, latlng);
         document.getElementById('nav-end').value = latlng.lat.toFixed(5) + ', ' + latlng.lng.toFixed(5);
-    }
-
-    // Optional: auto-calculate after second click
-    if (routingControl.getWaypoints().length >= 2) {
-        setTimeout(() => {
-            document.getElementById('nav-status').innerHTML = 'Route found!';
-        }, 800);
+        document.getElementById('nav-status').innerHTML = 'Route calculated!';
     }
 });
 
-// Button listeners (run after pane is added)
+// Button listeners
 setTimeout(() => {
-    document.getElementById('nav-go-btn').addEventListener('click', calculateRoute);
+    document.getElementById('nav-go-btn').addEventListener('click', function() {
+        document.getElementById('nav-status').innerHTML = 'Route ready (click map to set points)';
+    });
+
     document.getElementById('nav-clear-btn').addEventListener('click', clearNavigation);
 }, 300);
 
-// Create routing control on first use
+// Initialize
 createRoutingControl();
