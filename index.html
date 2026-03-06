@@ -102,18 +102,61 @@
   var guideposts;
 
 var searchHTML = `
-    <div style="padding: 15px 10px; background: #f8f8f8;">
-        <div style="display: flex; gap: 8px;">
-            <input id="sidebar-search" 
-                   type="text" 
-                   placeholder="Search any place or address..." 
-                   style="flex: 1; padding: 10px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px;">
-            <button id="sidebar-search-btn"
-                    style="padding: 0 18px; background: #3388ff; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 16px;">
+    <style>
+        .sidebar-search-container {
+            padding: 15px 10px;
+            background: #f8f8f8;
+            border-bottom: 1px solid #ddd;
+        }
+        .sidebar-search-input {
+            width: 100%;
+            padding: 10px 12px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-bottom: 8px;
+        }
+        .sidebar-search-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .sidebar-search-btn {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .sidebar-search-btn-search {
+            background: #3388ff;
+            color: white;
+        }
+        .sidebar-search-btn-clear {
+            background: #e74c3c;
+            color: white;
+        }
+    </style>
+
+    <div class="sidebar-search-container">
+        <input id="sidebar-search" 
+               type="text" 
+               class="sidebar-search-input"
+               placeholder="Search any place or address...">
+
+        <div class="sidebar-search-buttons">
+            <button id="sidebar-search-btn" class="sidebar-search-btn sidebar-search-btn-search">
                 Search
             </button>
+            <button id="sidebar-clear-btn" class="sidebar-search-btn sidebar-search-btn-clear">
+                Clear
+            </button>
         </div>
-        <small style="color: #666; margin-top: 4px; display: block;">Powered by OpenStreetMap Nominatim</small>
+
+        <small style="color: #666; margin-top: 6px; display: block;">
+            Powered by OpenStreetMap Nominatim • Free
+        </small>
     </div>
 `;
 
@@ -201,6 +244,7 @@ var searchHTML = `
   };
 
   control = L.control.layers(base_layers, overlays).addTo(map);
+  var searchMarkers = L.layerGroup().addTo(map);
 
 
   // create the sidebar instance and add it to the map
@@ -239,35 +283,48 @@ var searchHTML = `
 
   document.getElementById('guidepost').innerHTML = (document.getElementById('guidepost').innerHTML || '') + searchHTML;
 
-  var input = document.getElementById('sidebar-search');
-  var searchBtn = document.getElementById('sidebar-search-btn');
+// === SEARCH LOGIC ===
+var input = document.getElementById('sidebar-search');
+var searchBtn = document.getElementById('sidebar-search-btn');
+var clearBtn = document.getElementById('sidebar-clear-btn');
 
-  var performSearch = function() {
+var performSearch = function() {
     var query = input.value.trim();
     if (query.length < 3) {
         alert("Please type at least 3 characters");
         return;
     }
 
-    // Use free Nominatim search
-    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&q=' + encodeURIComponent(query))
+    fetch('https://nominatim.openstreetmap.org/search?format=jsonv2&limit=5&q=' + encodeURIComponent(query))
         .then(r => r.json())
         .then(results => {
             if (results && results.length > 0) {
-                var r = results[0];
-                var latlng = L.latLng(r.lat, r.lon);
+                searchMarkers.clearLayers();   // remove old markers first
 
-                map.flyTo(latlng, Math.max(map.getZoom(), 15), { duration: 1.5 });
+                results.forEach((r, i) => {
+                    var latlng = L.latLng(r.lat, r.lon);
+                    var marker = L.marker(latlng).addTo(searchMarkers)
+                        .bindPopup('<b>' + r.display_name + '</b><br><small>' + (r.type || '') + '</small>')
+                        .openPopup();
 
-                L.marker(latlng).addTo(map)
-                 .bindPopup('<b>' + r.display_name + '</b>')
-                 .openPopup();
+                    // Auto-zoom to first result only
+                    if (i === 0) {
+                        map.flyTo(latlng, Math.max(map.getZoom(), 15), { duration: 1.5 });
+                    }
+                });
             } else {
                 alert("No results found for: " + query);
             }
         })
         .catch(() => alert("Search failed. Try again later."));
+};
+
+  var clearSearch = function() {
+    searchMarkers.clearLayers();
+    input.value = '';
+    input.focus();
   };
+
 
   // Enter key
   input.addEventListener('keypress', function(e) {
@@ -276,7 +333,7 @@ var searchHTML = `
 
   // Click button
   searchBtn.addEventListener('click', performSearch);
-
+  clearBtn.addEventListener('click', clearSearch);
 
 </script>
 
