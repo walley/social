@@ -116,6 +116,10 @@
     layers: [mapnik]
   });
 
+  //get rid of flag
+  //this switches off attr completely, put it in map options - attributionControl: true
+  map.attributionControl.setPrefix('');
+
   var base_layers = {
     "Mapbox": streets,
     "Mapnik": mapnik

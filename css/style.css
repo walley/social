@@ -38,3 +38,6 @@ html, body, #map {
  width: 100%;
 }
 
+.leaflet-attribution-flag {
+    display: none !important;
+}
