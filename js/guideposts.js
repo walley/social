@@ -82,7 +82,7 @@ osmcz.guideposts = function(map, base_layers, overlays, control, group) {
   });
 
   var map_icon = L.icon({
-    iconUrl: osmcz.basePath + "img/gp/map.png",
+    iconUrl: osmcz.basePath + "img/map.png",
     iconSize: [48, 48],
     iconAnchor: [23, 45]
   });
